@@ -16,7 +16,8 @@ const actions = {
 
 const view = (state, actions) => (
   <div>
-    <h1>{JSON.stringify(state)}</h1>
+    <p className="debug">{JSON.stringify(state)}</p>
+
     {Object.keys(state.flightSurfaces).map(key => {
       const flightSurface = state.flightSurfaces[key]
 

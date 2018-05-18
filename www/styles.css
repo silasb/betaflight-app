@@ -20,6 +20,10 @@ body {
 	color: #ffffff;
 }
 
+.debug {
+  font-size: 0.5em;
+}
+
 .parent {
   display: flex;
   justify-content: space-between;
