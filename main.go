@@ -102,7 +102,7 @@ func main() {
 	w := webview.New(webview.Settings{
 		Width:  windowWidth,
 		Height: windowHeight,
-		Title:  "Click counter: " + uiFrameworkName,
+		Title:  "Betaflight PID App",
 		ExternalInvokeCallback: handleRPC,
 		Resizable:              true,
 		Debug:                  true,
