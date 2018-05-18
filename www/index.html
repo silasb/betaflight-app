@@ -3,30 +3,6 @@
   <head>
     <link href="https://fonts.googleapis.com/css?family=PT+Sans" rel="stylesheet">
   </head>
-  <div id="app">
-    test
-    {{ data.value }}
-    <div v-for="flightSurface in data.flightSurfaces">
-      <h1>{{ flightSurface.name }}</h1>
-
-      <div class="parent">
-        <pid
-          v-for="pid in flightSurface.pids"
-          v-bind:pid="pid"
-          v-bind:key="pid.name">
-        </pid>
-
-        <!-- <div class="pid2">
-          <div>{{ pid.name }}</div>
-
-          <div class="pid">
-            <button>+</button>
-            {{ pid.value }}
-            <button>-</button>
-          </div>
-        </div> -->
-      </div>
-
-    </div>
-  </div>
+  <body>
+  </body>
 </html>

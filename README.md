@@ -4,17 +4,13 @@ A Betaflight PID changer via a tablet
 
 ## Getting started
 
+Getting `yarn` and `go` packages install:
+
     yarn install
+    vgo get
 
-Building `hyperapp.js`
+Build the world:
 
-    rollup -i .\www\vendor\hyperapp.js -o www/vendor/hyperapp2.min.js -m -f umd -n hyperapp
+    yarn build
 
-Building the JS on demand:
-
-    yarn run watch
-
-Go stuff
-:g
-    go generate -tags js
-    vgo build -tags js
+Examine the `package.json` to understand the build commands.
