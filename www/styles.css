@@ -1,0 +1,58 @@
+*, *::after, *::before {
+  box-sizing: inherit;
+  font-family: "PT Sans", sans-serif;
+}
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body, html, #app {
+	/* min-height: 100%; */
+}
+
+body {
+	padding: .5em;
+	font-size: 3em;
+	background-color: #e91e63;
+	color: #ffffff;
+}
+
+.parent {
+  display: flex;
+  justify-content: space-between;
+/*   flex-direction: column; */
+/*   height: 100%; */
+}
+
+h1 {
+  font-size: 1em;
+  margin: 0;
+  padding: 0;
+}
+
+.pid2 {
+  display: flex;
+  align-items: center;
+/*   padding: .4em; */
+}
+
+.pid {
+  display: flex;
+  flex-direction: column;
+}
+
+.value {
+	margin: .25em 0 0 .25em;
+}
+
+body {
+  font-size: 3em;
+}
+
+button {
+	font-size: 1em;
+  margin: .25em;
+}
