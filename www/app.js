@@ -2,7 +2,10 @@
 
 const h = window.hyperapp.h
 
-let state = betaflight.data;
+let state = {
+  data: betaflight.data,
+  serial: null,
+}
 
 const actions = {
   incr: ([value, flightSurface, pid]) => {
@@ -11,30 +14,76 @@ const actions = {
   dec: ([value, flightSurface, pid]) => {
     betaflight.decPid(value, flightSurface, pid)
   },
-  updateGlobalState: value => state => value
+  savePids: value => (state, actions) => {
+    betaflight.savePids()
+
+    setTimeout(actions.data.set, 2000, '')
+  },
+  connect: value => (state, actions) => {
+    betaflight.connect(state.serial)
+
+    setTimeout(actions.data.set, 2000, '')
+  },
+  data: {
+    set: value => state => {
+      betaflight.setFlash(value)
+
+      return { flash: value }
+    },
+  },
+  saveSerial: value => state => {
+    return {
+      serial: value
+    }
+  },
+  updateGlobalState: value => state => value,
+  updateBetaflightData: value => state => ({data: value})
 }
 
-const view = (state, actions) => (
+const rank = {
+  'p': 2,
+  'i': 1,
+  'd': 0
+}
+
+const ConnectionView = ({serialPorts, connect, saveSerial}) => (
   <div>
-    <p className="debug">{JSON.stringify(state)}</p>
+    {serialPorts.size == 0
+      ? <p>No serial ports available</p>
+      : <div>
+        <select onchange={(e) => saveSerial(e.target.value)}>
+          <option></option>
+          {serialPorts.map(m => (
+            <option>{m}</option>
+          ))}
+        </select>
+        <button onclick={() => connect()}>Connect</button>
+        </div>
+    }
+  </div>
+)
 
-    {Object.keys(state.flightSurfaces).map(key => {
-      const flightSurface = state.flightSurfaces[key]
+const PidControlView = ({savePids, flightSurfaces, incr, dec}) => (
+  <div>
+    <button onclick={() => savePids([])}>Save</button>
 
-      return <div>
+    {Object.keys(flightSurfaces).map(key => {
+      const flightSurface = flightSurfaces[key]
+
+      return <div class="pids">
         <h1>{flightSurface.name}</h1>
 
         <div className="parent">
-          {Object.keys(state.flightSurfaces[key].pids).map(pidKey => {
-            const pid = state.flightSurfaces[key].pids[pidKey]
+          {Object.keys(flightSurfaces[key].pids).sort((a, b) => (rank[b] - rank[a])).map(pidKey => {
+            const pid = flightSurfaces[key].pids[pidKey]
 
             return <div className="pid2">
               <div>{pid.name}</div>
 
               <div className="pid">
-                <button  onclick={() => actions.incr([1, flightSurface.name.toLowerCase(), pid.name.toLowerCase()])}>+</button>
+                <button  onclick={() => incr([1, flightSurface.name.toLowerCase(), pid.name.toLowerCase()])}>+</button>
                 {pid.value}
-                <button onclick={() => actions.dec([1, flightSurface.name.toLowerCase(), pid.name.toLowerCase()])}>-</button>
+                <button onclick={() => dec([1, flightSurface.name.toLowerCase(), pid.name.toLowerCase()])}>-</button>
               </div>
             </div>
           })}
@@ -44,8 +93,32 @@ const view = (state, actions) => (
   </div>
 )
 
+const Flash = ({message}) => {
+  if (message) {
+    return <div className="flash">
+      {message}
+    </div>
+  }
+}
+
+const view = (state, actions) => (
+  <div>
+    {/* <p className="debug">{JSON.stringify(state)}</p> */}
+
+    <Flash message={state.data.flash} />
+
+    {state.data.connectedSerialPort == ""
+      ? <ConnectionView serialPorts={state.data.serialPortsAvailable} connect={actions.connect} saveSerial={actions.saveSerial} />
+      : <PidControlView savePids={actions.savePids} flightSurfaces={state.data.flightSurfaces} incr={actions.incr} dec={actions.dec} />
+    }
+
+  </div>
+)
+
 const app = window.hyperapp.app(state, actions, view, document.body)
 
 betaflight.render = () => {
-  app.updateGlobalState(betaflight.data)
+  app.updateBetaflightData(betaflight.data)
 }
+
+const debug = (blah) => alert(JSON.stringify(blah))

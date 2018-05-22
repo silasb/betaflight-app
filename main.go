@@ -1,10 +1,15 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"strconv"
 	"strings"
 
+	// serial "github.com/bugst/go-serial"
+	serial "go.bug.st/serial.v1"
+
+	_fc "github.com/fiam/msp-tool/fc"
 	"github.com/zserge/webview"
 )
 
@@ -12,6 +17,12 @@ const (
 	windowWidth  = 600
 	windowHeight = 900
 )
+
+var fc *_fc.FC
+var betaFlight *Betaflight
+var sync func()
+
+var w webview.WebView
 
 type Pid struct {
 	Name  string `json:"name"`
@@ -31,7 +42,14 @@ type FlightSurface struct {
 }
 
 type Betaflight struct {
-	FlightSurfaces map[string]*FlightSurface `json:"flightSurfaces"`
+	Flash                string                    `json:"flash"`
+	SerialPortsAvailable []string                  `json:"serialPortsAvailable"`
+	ConnectedSerialPort  string                    `json:"connectedSerialPort"`
+	FlightSurfaces       map[string]*FlightSurface `json:"flightSurfaces"`
+}
+
+func (c *Betaflight) SetFlash(value string) {
+	c.Flash = value
 }
 
 func (c *Betaflight) IncrPid(n int, flightSurface string, pid string) {
@@ -42,6 +60,64 @@ func (c *Betaflight) IncrPid(n int, flightSurface string, pid string) {
 func (c *Betaflight) DecPid(n int, flightSurface string, pid string) {
 	pidStruct := c.FlightSurfaces[flightSurface].Pids[pid]
 	pidStruct.Dec(n)
+}
+
+func (c *Betaflight) SavePids() {
+	fc.SetPIDs("somethign", convertLocalPidsToFCPids(betaFlight.FlightSurfaces))
+
+	c.Flash = "PIDs saved!"
+}
+
+func convertLocalPidsToFCPids(flightSurfaces map[string]*FlightSurface) []uint8 {
+
+	output := make([]uint8, 8)
+
+	for _, flightSurface := range []string{"yaw", "pitch", "roll"} {
+		fs := flightSurfaces[flightSurface]
+
+		var loopOver []string
+
+		if len(fs.Pids) == 3 {
+			loopOver = []string{"d", "i", "p"}
+		} else if len(fs.Pids) == 2 {
+			loopOver = []string{"i", "p"}
+		}
+
+		for _, pid := range loopOver {
+			p := fs.Pids[pid]
+
+			output = append([]uint8{uint8(p.Value)}, output...)
+		}
+	}
+
+	return output
+}
+
+func (c *Betaflight) Connect(serialPort string) {
+	var err error
+
+	var pidCb MyPIDReceiver
+
+	opts := _fc.FCOptions{
+		PortName: serialPort,
+		BaudRate: 115200,
+		// Stdout:           km,
+		EnableDebugTrace: true,
+	}
+	fc, err = _fc.NewFC(opts)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	go func() {
+		fc.StartUpdating(pidCb)
+	}()
+
+	c.ConnectedSerialPort = serialPort
+	c.Flash = "Connected!"
+
+	fc.GetPIDs()
+
 }
 
 func handleRPC(w webview.WebView, data string) {
@@ -98,21 +174,47 @@ func handleRPC(w webview.WebView, data string) {
 	}
 }
 
-func main() {
-	w := webview.New(webview.Settings{
-		Width:  windowWidth,
-		Height: windowHeight,
-		Title:  "Betaflight PID App",
-		ExternalInvokeCallback: handleRPC,
-		Resizable:              true,
-		Debug:                  true,
-		URL:                    injectHTML(string(MustAsset("www/index.html"))),
-		// URL:                    "data:text/html," + url.PathEscape(indexHTML),
+type MyPIDReceiver struct {
+}
+
+func (p MyPIDReceiver) ReceivedPID(pids map[string]*_fc.Pid) error {
+
+	interestingPids := map[string]bool{"roll": true, "pitch": true, "yaw": true}
+
+	for flightSurface, pid := range pids {
+		if !interestingPids[flightSurface] {
+			continue
+		}
+
+		if len(pid.Value) == 3 {
+			for i, p := range []string{"p", "i", "d"} {
+				betaFlight.FlightSurfaces[flightSurface].Pids[p].Value = int(pid.Value[i])
+			}
+		} else if len(pid.Value) == 2 {
+			for i, p := range []string{"p", "i"} {
+				betaFlight.FlightSurfaces[flightSurface].Pids[p].Value = int(pid.Value[i])
+			}
+		}
+	}
+
+	fmt.Println("finished updating pids")
+
+	w.Dispatch(func() {
+		sync()
 	})
 
-	defer w.Exit()
+	return nil
+}
 
-	betaFlight := &Betaflight{
+func main() {
+	ports, err := serial.GetPortsList()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	betaFlight = &Betaflight{
+		SerialPortsAvailable: ports,
+		// ConnectedSerialPort:  nil,
 		FlightSurfaces: map[string]*FlightSurface{
 			"roll": &FlightSurface{
 				Name: "Roll",
@@ -131,12 +233,58 @@ func main() {
 					},
 				},
 			},
+			"pitch": &FlightSurface{
+				Name: "Pitch",
+				Pids: map[string]*Pid{
+					"p": &Pid{
+						Name:  "P",
+						Value: 0,
+					},
+					"i": &Pid{
+						Name:  "I",
+						Value: 0,
+					},
+					"d": &Pid{
+						Name:  "D",
+						Value: 0,
+					},
+				},
+			},
+			"yaw": &FlightSurface{
+				Name: "Yaw",
+				Pids: map[string]*Pid{
+					"p": &Pid{
+						Name:  "P",
+						Value: 0,
+					},
+					"i": &Pid{
+						Name:  "I",
+						Value: 0,
+					},
+				},
+			},
 		},
 	}
 
+	w = webview.New(webview.Settings{
+		Width:  windowWidth,
+		Height: windowHeight,
+		Title:  "Betaflight PID App",
+		ExternalInvokeCallback: handleRPC,
+		Resizable:              true,
+		Debug:                  true,
+		URL:                    injectHTML(string(MustAsset("www/index.html"))),
+		// URL:                    "data:text/html," + url.PathEscape(indexHTML),
+	})
+
+	defer w.Exit()
 	w.Dispatch(func() {
+		var err error
 		// Inject controller
-		w.Bind("betaflight", betaFlight)
+		sync, err = w.Bind("betaflight", betaFlight)
+		if err != nil {
+			panic(err)
+		}
 
 		// Inject CSS
 		w.InjectCSS(string(MustAsset("www/styles.css")))
@@ -144,5 +292,6 @@ func main() {
 		// Inject web UI framework and app UI code
 		loadUIFramework(w)
 	})
+
 	w.Run()
 }
