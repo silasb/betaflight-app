@@ -7,7 +7,8 @@ import (
 	"strings"
 
 	// serial "github.com/bugst/go-serial"
-	serial "go.bug.st/serial.v1"
+
+	serial "github.com/bugst/go-serial"
 
 	_fc "github.com/fiam/msp-tool/fc"
 	"github.com/zserge/webview"
@@ -16,6 +17,7 @@ import (
 const (
 	windowWidth  = 600
 	windowHeight = 900
+	VERSION      = "0.1.1"
 )
 
 var fc *_fc.FC
@@ -63,7 +65,7 @@ func (c *Betaflight) DecPid(n int, flightSurface string, pid string) {
 }
 
 func (c *Betaflight) SavePids() {
-	fc.SetPIDs("somethign", convertLocalPidsToFCPids(betaFlight.FlightSurfaces))
+	fc.SetPIDs(convertLocalPidsToFCPids(betaFlight.FlightSurfaces))
 
 	c.Flash = "PIDs saved!"
 }
@@ -212,6 +214,8 @@ func main() {
 		log.Fatal(err)
 	}
 
+	CheckForNewUpdates(VERSION)
+
 	betaFlight = &Betaflight{
 		SerialPortsAvailable: ports,
 		// ConnectedSerialPort:  nil,
@@ -269,7 +273,7 @@ func main() {
 	w = webview.New(webview.Settings{
 		Width:  windowWidth,
 		Height: windowHeight,
-		Title:  "Betaflight PID App",
+		Title:  fmt.Sprintf("Betaflight PID App %s", VERSION),
 		ExternalInvokeCallback: handleRPC,
 		Resizable:              true,
 		Debug:                  true,
