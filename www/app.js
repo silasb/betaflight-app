@@ -4,7 +4,6 @@ const h = window.hyperapp.h
 
 let state = {
   data: betaflight.data,
-  serial: null,
 }
 
 const actions = {
@@ -20,7 +19,7 @@ const actions = {
     setTimeout(actions.data.set, 2000, '')
   },
   connect: value => (state, actions) => {
-    betaflight.connect(state.serial)
+    betaflight.connect(value)
 
     setTimeout(actions.data.set, 2000, '')
   },
@@ -30,11 +29,6 @@ const actions = {
 
       return { flash: value }
     },
-  },
-  saveSerial: value => state => {
-    return {
-      serial: value
-    }
   },
   updateGlobalState: value => state => value,
   updateBetaflightData: value => state => ({data: value})
@@ -46,20 +40,13 @@ const rank = {
   'd': 0
 }
 
-const ConnectionView = ({serialPorts, connect, saveSerial}) => (
-  <div>
-    {serialPorts.size == 0
-      ? <p>No serial ports available</p>
-      : <div>
-        <select onchange={(e) => saveSerial(e.target.value)}>
-          <option></option>
-          {serialPorts.map(m => (
-            <option>{m}</option>
-          ))}
-        </select>
-        <button onclick={() => connect()}>Connect</button>
-        </div>
-    }
+const ConnectionView = ({serialPorts, connect}) => (
+  <div className="serial-ports">
+    <div className="banner">hi tune your pids with this app</div>
+    <div className="banner">please select the serial port you want to connect to:</div>
+      {serialPorts.map(m => (
+        <div className="serial-port" onclick={() => connect(m)}>{m}</div>
+      ))}
   </div>
 )
 
