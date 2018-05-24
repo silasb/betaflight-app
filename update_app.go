@@ -58,7 +58,7 @@ func CheckForNewUpdates(versionString string) (err error) {
 
 func updateBinary(version Version) (err error) {
 	resp, err := http.Get(UPDATE_HOST_BASE + version.File)
-	if err != nil {
+	if err != nil || resp.StatusCode != 200 {
 		log.Println(err)
 		return nil
 	}

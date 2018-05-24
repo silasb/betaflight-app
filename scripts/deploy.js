@@ -31,7 +31,8 @@ result('git describe --tags --long', function(err, sha) {
 
     console.log(response)
 
-    const destExePath = 'dist/gui-' + sha + '.exe'
+    const exePath = 'gui-' + sha + '.exe'
+    const destExePath = 'dist/' + exePath
 
     fs.rename('betaflight-pid-app.exe', destExePath, function() {
       console.log('Renamed app from betaflight-pid-app.exe to ' + destExePath)
@@ -39,7 +40,7 @@ result('git describe --tags --long', function(err, sha) {
       const versions = [
         {
           version: sha,
-          file: destExePath
+          file: exePath
         }
       ]
 
