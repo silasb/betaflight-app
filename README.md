@@ -1,6 +1,6 @@
-# Betaflight PID App
+# Betaflight App
 
-A Betaflight PID changer via a tablet
+A quick Betaflight PID changer specifically for a tablet.
 
 ![Screen1](.images/screen1.png?raw=true "Screen")
 ![Screen2](.images/screen2.png?raw=true "Screen")
@@ -17,3 +17,11 @@ Build the world:
     yarn build-amd64
 
 Examine the `package.json` to understand the build commands.
+
+## Todo
+
+- [x] Auto update binary
+- [ ] Auto refresh serial ports
+- [ ] Test with esp8266
+- [ ] Load different profiles
+- [ ] Allow changing rates
