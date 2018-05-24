@@ -45,6 +45,15 @@ result('git describe --tags --long', function(err, sha) {
 
       fs.writeFile('dist/versions.json', JSON.stringify(versions), function(err) {
         console.log('Version: dist/versions.json created')
+
+        result(`scp -r dist/. foo.us.to:www/foo.us.to/html/gui2/`, function(err) {
+          if (err) {
+            console.error(err)
+            return
+          }
+
+          console.log(`Deployed ${sha} to foo.us.to`)
+        })
       })
     })
   })

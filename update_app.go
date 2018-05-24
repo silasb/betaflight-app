@@ -50,7 +50,7 @@ func CheckForNewUpdates(versionString string) (err error) {
 		fmt.Println("We are up to date")
 		return nil
 	} else {
-		fmt.Println("latest version", latestVersion.Version)
+		fmt.Println("Using latest version", latestVersion.Version)
 
 		return updateBinary(latestVersion)
 	}
@@ -74,20 +74,23 @@ func updateBinary(version Version) (err error) {
 		return err
 	}
 
+	// copy current exe to backup so we can try to restore if something fails
 	destBackup := dest + ".bak"
 	if _, err := os.Stat(dest); err == nil {
 		os.Rename(dest, destBackup)
 	}
 
-	log.Printf("downloading new version to %s\n", dest)
+	log.Printf("Downloading new version to %s\n", dest)
 	if err := ioutil.WriteFile(dest, data, 0755); err != nil {
+		// something failed, let's restore the backup
 		os.Rename(destBackup, dest)
 		return err
 	}
 
+	// we suceeded let's delete the backup
 	os.Remove(destBackup)
 
-	log.Printf("updated with success to version %s\nRestarting application\n", version.Version)
+	log.Printf("Updated with success to version %s\nRestarting application\n", version.Version)
 
 	var args []string
 	cmd := exec.Command(os.Args[0], args...)
