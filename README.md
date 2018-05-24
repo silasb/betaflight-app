@@ -3,6 +3,7 @@
 A Betaflight PID changer via a tablet
 
 ![Screen1](.images/screen1.png?raw=true "Screen")
+![Screen2](.images/screen2.png?raw=true "Screen")
 
 ## Getting started
 
