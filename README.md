@@ -14,6 +14,6 @@ Getting `yarn` and `go` packages install:
 
 Build the world:
 
-    yarn build
+    yarn build-amd64
 
 Examine the `package.json` to understand the build commands.
