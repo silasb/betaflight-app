@@ -89,7 +89,12 @@ func UpdateBinary(version *Version) (err error) {
 	}
 
 	// we suceeded let's delete the backup
-	os.Remove(destBackup)
+	// don't think this will ever work correctly
+	// err := os.Remove(destBackup)
+	// if err != nil {
+	// 	log.Println(err)
+	// 	return err
+	// }
 
 	log.Printf("Updated to version %s\n", version.Version)
 	log.Println("Restarting app")
