@@ -46,9 +46,9 @@ const ConnectionView = ({serialPorts, connect}) => (
   <div className="serial-ports">
     <div className="banner">hi tune your pids with this app</div>
     <div className="banner">please select the serial port you want to connect to:</div>
-      {serialPorts.map(m => (
-        <div className="serial-port" onclick={() => connect(m)}>{m}</div>
-      ))}
+    {serialPorts.map(m => (
+      <div className="serial-port" onclick={() => connect(m)}>{m}</div>
+    ))}
   </div>
 )
 
