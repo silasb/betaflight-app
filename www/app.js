@@ -40,6 +40,8 @@ const rank = {
   'd': 0
 }
 
+const flightSurfaceOrder = ['roll', 'pitch', 'yaw']
+
 const ConnectionView = ({serialPorts, connect}) => (
   <div className="serial-ports">
     <div className="banner">hi tune your pids with this app</div>
@@ -54,7 +56,7 @@ const PidControlView = ({savePids, flightSurfaces, incr, dec}) => (
   <div>
     <button onclick={() => savePids([])}>Save</button>
 
-    {Object.keys(flightSurfaces).map(key => {
+    {flightSurfaceOrder.map(key => {
       const flightSurface = flightSurfaces[key]
 
       return <div class="pids">
