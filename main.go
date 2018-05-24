@@ -17,9 +17,9 @@ import (
 const (
 	windowWidth  = 600
 	windowHeight = 900
-	VERSION      = "0.1.1"
 )
 
+var VERSION string
 var fc *_fc.FC
 var betaFlight *Betaflight
 var sync func()

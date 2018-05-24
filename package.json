@@ -8,8 +8,10 @@
     "build-app": "babel www/app.js --out-file www/dist.js",
     "build-js": "yarn run build-framework && yarn run build-app",
     "watch": "babel --watch www/app.js --out-file www/dist.js",
-    "build-amd64": "yarn run build-framework && yarn run build-app && vgo generate -tags js && set CGO_ENABLED=1&& set GOARCH=amd64&& vgo build -v -ldflags=\"-H windowsgui\" -tags js",
-    "build-386": "yarn run build-framework && yarn run build-app && vgo generate -tags js && set GOARCH=386&& set CGO_ENABLED=1&& vgo build -ldflags=\"-H windowsgui\" -v -tags js"
+    "build-amd64": "yarn run build-framework && yarn run build-app && vgo generate -tags js && set CGO_ENABLED=1&& set GOARCH=amd64&& yarn build-windows",
+    "build-386": "yarn run build-framework && yarn run build-app && vgo generate -tags js && set GOARCH=386&& set CGO_ENABLED=1&& yarn build-windows",
+    "build-windows": "vgo build -ldflags \"-H windowsgui -X main.VERSION=%VERSION%\" -v -tags js",
+    "version-386": "node scripts/deploy.js"
   },
   "dependencies": {
     "babel-cli": "^6.26.0",
