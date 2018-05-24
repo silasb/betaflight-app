@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -24,11 +23,11 @@ type Versions struct {
 	Versions []Version
 }
 
-func CheckForNewUpdates(versionString string) (err error) {
+func HasNewerVersion(versionString string) (bool, *Version) {
 	resp, err := http.Get(UPDATE_HOST_BASE + "versions.json")
 	if err != nil {
 		log.Println(err)
-		return nil
+		return false, nil
 	}
 	defer resp.Body.Close()
 
@@ -47,16 +46,18 @@ func CheckForNewUpdates(versionString string) (err error) {
 	}
 
 	if latestVersion.Version == "" {
-		fmt.Println("We are up to date")
-		return nil
-	} else {
-		fmt.Println("Using latest version", latestVersion.Version)
-
-		return updateBinary(latestVersion)
+		log.Println("We are up to date")
+		return false, nil
 	}
+
+	log.Println("Can upgrade to", latestVersion.Version)
+
+	return true, &latestVersion
 }
 
-func updateBinary(version Version) (err error) {
+func UpdateBinary(version *Version) (err error) {
+	log.Println("Upgrading to version", version.Version)
+
 	resp, err := http.Get(UPDATE_HOST_BASE + version.File)
 	if err != nil || resp.StatusCode != 200 {
 		log.Println(err)
@@ -90,17 +91,20 @@ func updateBinary(version Version) (err error) {
 	// we suceeded let's delete the backup
 	os.Remove(destBackup)
 
-	log.Printf("Updated with success to version %s\nRestarting application\n", version.Version)
+	log.Printf("Updated to version %s\n", version.Version)
+	log.Println("Restarting app")
 
 	var args []string
 	cmd := exec.Command(os.Args[0], args...)
 	cmd.Stdin = os.Stdin
 	cmd.Stderr = os.Stderr
 	cmd.Stdout = os.Stdout
-	if err := cmd.Run(); err != nil {
+
+	if err := cmd.Start(); err != nil {
 		// If the command fails to run or doesn't complete successfully, the
 		// error is of type *ExitError. Other error types may be
 		// returned for I/O problems.
+		log.Println(err)
 		if exiterr, ok := err.(*exec.ExitError); ok {
 			// The command didn't complete correctly.
 			// Exiting while keeping the status code.

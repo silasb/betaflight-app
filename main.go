@@ -44,6 +44,7 @@ type FlightSurface struct {
 }
 
 type Betaflight struct {
+	UpdatingApp          bool                      `json:"updating_app"`
 	Flash                string                    `json:"flash"`
 	SerialPortsAvailable []string                  `json:"serialPortsAvailable"`
 	ConnectedSerialPort  string                    `json:"connectedSerialPort"`
@@ -214,8 +215,6 @@ func main() {
 		log.Fatal(err)
 	}
 
-	CheckForNewUpdates(VERSION)
-
 	betaFlight = &Betaflight{
 		SerialPortsAvailable: ports,
 		// ConnectedSerialPort:  nil,
@@ -268,6 +267,16 @@ func main() {
 				},
 			},
 		},
+	}
+
+	if ok, version := HasNewerVersion(VERSION); ok {
+		betaFlight.UpdatingApp = true
+		go func() {
+			err := UpdateBinary(version)
+			if err != nil {
+				panic(err)
+			}
+		}()
 	}
 
 	w = webview.New(webview.Settings{

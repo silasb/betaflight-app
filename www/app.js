@@ -92,12 +92,18 @@ const view = (state, actions) => (
   <div>
     {/* <p className="debug">{JSON.stringify(state)}</p> */}
 
-    <Flash message={state.data.flash} />
+    {state.data.updating_app
+      ? <p>Updating application...</p>
+      : <div>
+          <Flash message={state.data.flash} />
 
-    {state.data.connectedSerialPort == ""
-      ? <ConnectionView serialPorts={state.data.serialPortsAvailable} connect={actions.connect} saveSerial={actions.saveSerial} />
-      : <PidControlView savePids={actions.savePids} flightSurfaces={state.data.flightSurfaces} incr={actions.incr} dec={actions.dec} />
+          {state.data.connectedSerialPort == ""
+            ? <ConnectionView serialPorts={state.data.serialPortsAvailable} connect={actions.connect} saveSerial={actions.saveSerial} />
+            : <PidControlView savePids={actions.savePids} flightSurfaces={state.data.flightSurfaces} incr={actions.incr} dec={actions.dec} />
+        }
+        </div>
     }
+
 
   </div>
 )
