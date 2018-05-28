@@ -4,6 +4,12 @@ var fs = require('fs');
 
 var exec = require('child_process').exec;
 
+const buildCmd = process.argv[2]
+if (!buildCmd) {
+    console.error("Missing build command")
+    process.exit(-1)
+}
+
 var result = function(command, cb){
   var child = exec(command, function(err, stdout, stderr){
     if(err != null){
@@ -23,7 +29,7 @@ result('git describe --tags --long', function(err, sha) {
 
   process.env['VERSION'] = sha
 
-  result('yarn build-386', function(err, response) {
+  result(`yarn ${buildCmd}`, function(err, response) {
     if (err) {
       console.error(err)
       return

@@ -6,9 +6,8 @@ import (
 	"strconv"
 	"strings"
 
-	// serial "github.com/bugst/go-serial"
-
-	serial "github.com/bugst/go-serial"
+	serial "go.bug.st/serial.v1"
+	//serial "github.com/bugst/go-serial"
 
 	_fc "github.com/fiam/msp-tool/fc"
 	"github.com/zserge/webview"
@@ -120,7 +119,6 @@ func (c *Betaflight) Connect(serialPort string) {
 	c.Flash = "Connected!"
 
 	fc.GetPIDs()
-
 }
 
 func handleRPC(w webview.WebView, data string) {

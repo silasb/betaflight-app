@@ -18,6 +18,12 @@ Build the world:
 
 Examine the `package.json` to understand the build commands.
 
+## Development
+
+    yarn watch
+
+    VERSION=v2 yarn run:darwin:amd64
+
 ## Todo
 
 - [x] Auto update binary
