@@ -1,0 +1,14 @@
+matrix:
+  include:
+    - language: go
+      go: 1.10.x
+script:
+  - go get -u golang.org/x/vgo
+  - vgo get
+  - diff -u <(echo -n) <(gofmt -d -s .)
+  - vgo tool vet .
+  - vgo test -v -race ./...
+
+notifications:
+  email:
+    - silas.baronda@gmail.com
