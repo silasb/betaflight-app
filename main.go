@@ -121,6 +121,17 @@ func (c *Betaflight) Connect(serialPort string) {
 	fc.GetPIDs()
 }
 
+func (c *Betaflight) Disconnect() {
+	err := fc.Close()
+	if err != nil {
+		c.Flash = "Could not disconnect serial port"
+		return
+	}
+
+	c.ConnectedSerialPort = ""
+	c.Flash = "Serial port disconnected"
+}
+
 func handleRPC(w webview.WebView, data string) {
 	switch {
 	case data == "close":
