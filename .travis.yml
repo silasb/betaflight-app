@@ -16,7 +16,7 @@ before_install:
   - go get -u golang.org/x/vgo
 
 install:
-  - vgo get
+  - vgo list -m -u
 
 script:
   - diff -u <(echo -n) <(gofmt -d -s .)
