@@ -2,6 +2,18 @@ sudo: false
 language: go
 go:
   - 1.10.x
+
+os:
+  - linux
+  - osx
+
+matrix:
+  allow_failures:
+    - go: tip
+  fast_finish: true
+
+install:
+
 script:
   - go get -u golang.org/x/vgo
   - vgo get
