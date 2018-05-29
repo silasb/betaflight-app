@@ -19,9 +19,10 @@ install:
   - vgo list -m -u
 
 script:
-  - diff -u <(echo -n) <(gofmt -d -s .)
-  - vgo tool vet .
-  - vgo test -v -race ./...
+  # - diff -u <(echo -n) <(gofmt -d -s .)
+  # - vgo tool vet .
+  # - vgo test -v -race ./...
+  - yarn version-darwin-amd64
 
 notifications:
   email:
