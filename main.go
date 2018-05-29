@@ -5,6 +5,7 @@ import (
 	"log"
 	"strconv"
 	"strings"
+	"time"
 
 	serial "go.bug.st/serial.v1"
 	//serial "github.com/bugst/go-serial"
@@ -22,6 +23,7 @@ var VERSION string
 var fc *_fc.FC
 var betaFlight *Betaflight
 var sync func()
+var ticker *time.Ticker
 
 var w webview.WebView
 
@@ -98,6 +100,8 @@ func convertLocalPidsToFCPids(flightSurfaces map[string]*FlightSurface) []uint8 
 func (c *Betaflight) Connect(serialPort string) {
 	var err error
 
+	ticker.Stop()
+
 	var pidCb MyPIDReceiver
 
 	opts := _fc.FCOptions{
@@ -128,8 +132,26 @@ func (c *Betaflight) Disconnect() {
 		return
 	}
 
+	// restart serial port ticker
+	ticker = time.NewTicker(time.Second)
+	go watchSerialPorts(ticker)
+
 	c.ConnectedSerialPort = ""
 	c.Flash = "Serial port disconnected"
+}
+
+func watchSerialPorts(ticker *time.Ticker) {
+	for range ticker.C {
+		ports, err := serial.GetPortsList()
+		if err != nil {
+			log.Fatal(err)
+		}
+		betaFlight.SerialPortsAvailable = ports
+
+		w.Dispatch(func() {
+			sync()
+		})
+	}
 }
 
 func handleRPC(w webview.WebView, data string) {
@@ -219,10 +241,7 @@ func (p MyPIDReceiver) ReceivedPID(pids map[string]*_fc.Pid) error {
 }
 
 func main() {
-	ports, err := serial.GetPortsList()
-	if err != nil {
-		log.Fatal(err)
-	}
+	var ports []string
 
 	betaFlight = &Betaflight{
 		SerialPortsAvailable: ports,
@@ -298,6 +317,10 @@ func main() {
 		URL:                    injectHTML(string(MustAsset("www/index.html"))),
 		// URL:                    "data:text/html," + url.PathEscape(indexHTML),
 	})
+
+	// ticker used for watching the serial ports
+	ticker = time.NewTicker(time.Second)
+	go watchSerialPorts(ticker)
 
 	defer w.Exit()
 	w.Dispatch(func() {

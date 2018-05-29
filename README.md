@@ -28,7 +28,7 @@ Examine the `package.json` to understand the build commands.
 
 - [x] Auto update binary
 - [x] Manual disconnect from FC
-- [ ] Auto refresh serial ports
+- [x] Auto refresh serial ports
 - [ ] Test with esp8266
 - [ ] Load different profiles
 - [ ] Allow changing rates
