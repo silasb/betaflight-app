@@ -12,11 +12,13 @@ matrix:
     - go: tip
   fast_finish: true
 
+before_install:
+  - go get -u golang.org/x/vgo
+
 install:
+  - vgo get
 
 script:
-  - go get -u golang.org/x/vgo
-  - vgo get
   - diff -u <(echo -n) <(gofmt -d -s .)
   - vgo tool vet .
   - vgo test -v -race ./...
