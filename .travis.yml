@@ -22,8 +22,8 @@ matrix:
   # fast_finish: true
 
 install:
+  - go get -x -u github.com/jteeuwen/go-bindata/...
   - go get -x -u golang.org/x/vgo
-  - go get -u github.com/jteeuwen/go-bindata/...
   - vgo list -m -u
   - yarn install
 
