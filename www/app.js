@@ -28,6 +28,12 @@ const actions = {
 
     setTimeout(actions.data.set, 2000, '')
   },
+  load: value => () => {
+    external.invoke_('load')
+  },
+  dump: value => () => {
+    external.invoke_('dump')
+  },
   data: {
     set: value => state => {
       betaflight.setFlash(value)
@@ -64,10 +70,12 @@ const ConnectionView = ({serialPorts, connect}) => (
   </div>
 )
 
-const PidControlView = ({savePids, disconnect, flightSurfaces, incr, dec}) => (
+const PidControlView = ({savePids, disconnect, flightSurfaces, incr, dec, dump, load}) => (
   <div>
     <button onclick={() => savePids([])}>Save</button>
     <button onclick={() => disconnect([])}>Disconnect</button>
+    <button onclick={() => load()}>Load</button>
+    <button onclick={() => dump()}>Dump</button>
 
     {flightSurfaceOrder.map(key => {
       const flightSurface = flightSurfaces[key]
@@ -114,7 +122,7 @@ const view = (state, actions) => (
 
           {state.data.connectedSerialPort == ""
             ? <ConnectionView serialPorts={state.data.serialPortsAvailable} connect={actions.connect} saveSerial={actions.saveSerial} />
-            : <PidControlView savePids={actions.savePids} disconnect={actions.disconnect} flightSurfaces={state.data.flightSurfaces} incr={actions.incr} dec={actions.dec} />
+            : <PidControlView {...actions} flightSurfaces={state.data.flightSurfaces} />
         }
         </div>
     }
