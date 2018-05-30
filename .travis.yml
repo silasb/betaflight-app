@@ -14,11 +14,13 @@ matrix:
         - sudo apt-get update
         - sudo apt-get install libwebkit2gtk-4.0-dev -y
       script:
-        - yarn version-darwin-linux-amd64
+        - yarn build:darwin:amd64
+        - yarn build-darwin-linux
     - os: osx
       osx_image: xcode8.3
       script:
-        - yarn version-darwin-linux-amd64
+        - yarn build:darwin:amd64
+        - yarn build-darwin-linux
   # fast_finish: true
 
 install:
