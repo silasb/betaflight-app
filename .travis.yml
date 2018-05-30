@@ -24,6 +24,7 @@ matrix:
 install:
   - go get -u golang.org/x/vgo
   - vgo list -m -u
+  - yarn install
 
 notifications:
   email:
