@@ -3,19 +3,21 @@ language: go
 go:
   - 1.10.x
 
-os:
-  - linux
-  - osx
-
 matrix:
-  allow_failures:
-    - go: tip
-  fast_finish: true
+  include:
+    - os: linux
+      before_install:
+        - curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+        - echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+        - sudo apt-get update && sudo apt-get install yarn
+        - sudo add-apt-repository ppa:webkit-team/ppa -y
+        - sudo apt-get update
+        - sudo apt-get install libwebkit2gtk-4.0-dev -y
+    - os: osx
+      osx_image: xcode8.3
+  # fast_finish: true
 
 before_install:
-  - curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
-  - echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
-  - sudo apt-get update && sudo apt-get install yarn
   - go get -u golang.org/x/vgo
 
 install:
