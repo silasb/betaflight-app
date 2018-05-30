@@ -13,19 +13,17 @@ matrix:
         - sudo add-apt-repository ppa:webkit-team/ppa -y
         - sudo apt-get update
         - sudo apt-get install libwebkit2gtk-4.0-dev -y
+      script:
+        - yarn version-darwin-linux-amd64
     - os: osx
       osx_image: xcode8.3
+      script:
+        - yarn version-darwin-linux-amd64
   # fast_finish: true
 
 install:
   - go get -u golang.org/x/vgo
   - vgo list -m -u
-
-script:
-  # - diff -u <(echo -n) <(gofmt -d -s .)
-  # - vgo tool vet .
-  # - vgo test -v -race ./...
-  - yarn version-darwin-amd64
 
 notifications:
   email:
