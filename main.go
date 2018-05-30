@@ -1,7 +1,9 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"strconv"
 	"strings"
@@ -132,6 +134,32 @@ func (c *Betaflight) Disconnect() {
 	c.Flash = "Serial port disconnected"
 }
 
+func (c *Betaflight) ExportPids(path string) error {
+	b, _ := json.MarshalIndent(betaFlight.FlightSurfaces, "", "  ")
+	b = append(b, '\n')
+
+	err := ioutil.WriteFile(path, b, 0644)
+
+	fmt.Printf("Wrote %+v\n", path)
+
+	return err
+}
+
+func (c *Betaflight) ImportPids(path string) error {
+	b, err := ioutil.ReadFile(path)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(b, &betaFlight.FlightSurfaces)
+
+	sync()
+
+	fmt.Printf("Read %+v\n", path)
+
+	return err
+}
+
 func handleRPC(w webview.WebView, data string) {
 	switch {
 	case data == "close":
@@ -140,12 +168,20 @@ func handleRPC(w webview.WebView, data string) {
 		w.SetFullscreen(true)
 	case data == "unfullscreen":
 		w.SetFullscreen(false)
-	case data == "open":
-		log.Println("open", w.Dialog(webview.DialogTypeOpen, 0, "Open file", ""))
+	case data == "load":
+		path := w.Dialog(webview.DialogTypeOpen, 0, "Open file", "")
+		err := betaFlight.ImportPids(path)
+		if err != nil {
+			log.Println("Error", err)
+		}
 	case data == "opendir":
 		log.Println("open", w.Dialog(webview.DialogTypeOpen, webview.DialogFlagDirectory, "Open directory", ""))
-	case data == "save":
-		log.Println("save", w.Dialog(webview.DialogTypeSave, 0, "Save file", ""))
+	case data == "dump":
+		path := w.Dialog(webview.DialogTypeSave, 0, "Save file", "")
+		err := betaFlight.ExportPids(path)
+		if err != nil {
+			log.Println("Error", err)
+		}
 	case data == "message":
 		w.Dialog(webview.DialogTypeAlert, 0, "Hello", "Hello, world!")
 	case data == "info":

@@ -32,3 +32,4 @@ Examine the `package.json` to understand the build commands.
 - [ ] Test with esp8266
 - [ ] Load different profiles
 - [ ] Allow changing rates
+- [x] Saving/loading PIDs
