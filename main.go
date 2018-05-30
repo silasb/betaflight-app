@@ -1,10 +1,13 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"strconv"
 	"strings"
+	"time"
 
 	serial "go.bug.st/serial.v1"
 	//serial "github.com/bugst/go-serial"
@@ -22,6 +25,7 @@ var VERSION string
 var fc *_fc.FC
 var betaFlight *Betaflight
 var sync func()
+var ticker *time.Ticker
 
 var w webview.WebView
 
@@ -98,6 +102,8 @@ func convertLocalPidsToFCPids(flightSurfaces map[string]*FlightSurface) []uint8 
 func (c *Betaflight) Connect(serialPort string) {
 	var err error
 
+	ticker.Stop()
+
 	var pidCb MyPIDReceiver
 
 	opts := _fc.FCOptions{
@@ -128,8 +134,53 @@ func (c *Betaflight) Disconnect() {
 		return
 	}
 
+	// restart serial port ticker
+	ticker = time.NewTicker(time.Second)
+	go watchSerialPorts(ticker)
+
 	c.ConnectedSerialPort = ""
 	c.Flash = "Serial port disconnected"
+}
+
+
+func (c *Betaflight) ExportPids(path string) error {
+	b, _ := json.MarshalIndent(betaFlight.FlightSurfaces, "", "  ")
+	b = append(b, '\n')
+
+	err := ioutil.WriteFile(path, b, 0644)
+
+	fmt.Printf("Wrote %+v\n", path)
+
+	return err
+}
+
+func (c *Betaflight) ImportPids(path string) error {
+	b, err := ioutil.ReadFile(path)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(b, &betaFlight.FlightSurfaces)
+
+	sync()
+
+	fmt.Printf("Read %+v\n", path)
+
+	return err
+}
+
+func watchSerialPorts(ticker *time.Ticker) {
+	for range ticker.C {
+		ports, err := serial.GetPortsList()
+		if err != nil {
+			log.Fatal(err)
+		}
+		betaFlight.SerialPortsAvailable = ports
+
+		w.Dispatch(func() {
+			sync()
+		})
+	}
 }
 
 func handleRPC(w webview.WebView, data string) {
@@ -140,12 +191,20 @@ func handleRPC(w webview.WebView, data string) {
 		w.SetFullscreen(true)
 	case data == "unfullscreen":
 		w.SetFullscreen(false)
-	case data == "open":
-		log.Println("open", w.Dialog(webview.DialogTypeOpen, 0, "Open file", ""))
+	case data == "load":
+		path := w.Dialog(webview.DialogTypeOpen, 0, "Open file", "")
+		err := betaFlight.ImportPids(path)
+		if err != nil {
+			log.Println("Error", err)
+		}
 	case data == "opendir":
 		log.Println("open", w.Dialog(webview.DialogTypeOpen, webview.DialogFlagDirectory, "Open directory", ""))
-	case data == "save":
-		log.Println("save", w.Dialog(webview.DialogTypeSave, 0, "Save file", ""))
+	case data == "dump":
+		path := w.Dialog(webview.DialogTypeSave, 0, "Save file", "")
+		err := betaFlight.ExportPids(path)
+		if err != nil {
+			log.Println("Error", err)
+		}
 	case data == "message":
 		w.Dialog(webview.DialogTypeAlert, 0, "Hello", "Hello, world!")
 	case data == "info":
@@ -219,10 +278,7 @@ func (p MyPIDReceiver) ReceivedPID(pids map[string]*_fc.Pid) error {
 }
 
 func main() {
-	ports, err := serial.GetPortsList()
-	if err != nil {
-		log.Fatal(err)
-	}
+	var ports []string
 
 	betaFlight = &Betaflight{
 		SerialPortsAvailable: ports,
@@ -298,6 +354,10 @@ func main() {
 		URL:                    injectHTML(string(MustAsset("www/index.html"))),
 		// URL:                    "data:text/html," + url.PathEscape(indexHTML),
 	})
+
+	// ticker used for watching the serial ports
+	ticker = time.NewTicker(time.Second)
+	go watchSerialPorts(ticker)
 
 	defer w.Exit()
 	w.Dispatch(func() {
