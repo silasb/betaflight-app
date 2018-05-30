@@ -18,6 +18,8 @@ matrix:
         - yarn build-darwin-linux
     - os: osx
       osx_image: xcode8.3
+      before_install:
+        - brew install yarn
       script:
         - yarn build:darwin:amd64
         - yarn build-darwin-linux
