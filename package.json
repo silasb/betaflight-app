@@ -25,7 +25,7 @@
     "build-darwin-linux": "vgo build -ldflags \" -X main.VERSION=$VERSION\" -v -tags js",
     "run-darwin-linux":   "vgo run -ldflags \" -X main.VERSION=$VERSION\" -v -tags js *.go",
 
-    "version:darwin:amd64":  "set GOARCH=amd64&& set CGO_ENABLED=1&& set GOOS=darwin&& node scripts/build.js build-darwin-linux",
+    "version:darwin:amd64":  "GOARCH=amd64 CGO_ENABLED=1 GOOS=darwin node scripts/build.js build-darwin-linux",
     "deploy:darwin:amd64":  "yarn version:darwin:amd64 && node scripts/deploy.js build-darwin-linux",
 
     "version:windows:amd64":  "set GOARCH=amd64&& set CGO_ENABLED=1&& set GOOS=windows&& node scripts/build.js build-windows",
