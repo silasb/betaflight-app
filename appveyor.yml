@@ -1,0 +1,29 @@
+version: "{build}"
+
+clone_folder: c:\gopath\src\github.com\golang\dep
+
+environment:
+  GOPATH: c:\gopath
+  DEPTESTBYPASS501: 1
+
+# environment:
+#   global:
+#     STACK_ROOT: "c:\\sr"
+
+
+# scripts that run after cloning repository
+install:
+  - set PATH=%GOPATH%\bin;c:\go\bin;%PATH%
+  - go version
+  - go env
+  - go get -u golang.org/x/vgo
+  - vgo list -m
+
+build_script:
+  - echo "hello"
+
+# to disable automatic tests
+test: off
+
+# to disable deployment
+deploy: off
