@@ -4,12 +4,6 @@ var fs = require('fs');
 
 var exec = require('child_process').exec;
 
-const buildCmd = process.argv[2]
-if (!buildCmd) {
-    console.error("Missing build command")
-    process.exit(-1)
-}
-
 var result = function(command, cb){
   var child = exec(command, function(err, stdout, stderr){
     if(err != null){
@@ -22,45 +16,39 @@ var result = function(command, cb){
   });
 }
 
-result('git describe --tags --long', function(err, sha) {
-  sha = sha.replace(/(.*)-(.*)/, '$1')
-  sha = sha.replace(/^\s+|\s+$/g, '')
-  console.log(`Building: ${sha}`)
+const build = require('./build').build
 
-  process.env['VERSION'] = sha
+const buildCmd = process.argv[2]
 
-  result(`yarn ${buildCmd}`, function(err, response) {
-    if (err) {
-      console.error(err)
-      return
-    }
+if (!buildCmd) {
+  console.error("Missing build command")
+  process.exit(-1)
+}
 
-    console.log(response)
+build(buildCmd, function(sha) {
+  const exePath = 'gui-' + sha + '.exe'
+  const destExePath = 'dist/' + exePath
 
-    const exePath = 'gui-' + sha + '.exe'
-    const destExePath = 'dist/' + exePath
+  fs.rename('betaflight-pid-app.exe', destExePath, function() {
+    console.log('Renamed app from betaflight-pid-app.exe to ' + destExePath)
 
-    fs.rename('betaflight-pid-app.exe', destExePath, function() {
-      console.log('Renamed app from betaflight-pid-app.exe to ' + destExePath)
+    const versions = [
+      {
+        version: sha,
+        file: exePath
+      }
+    ]
 
-      const versions = [
-        {
-          version: sha,
-          file: exePath
+    fs.writeFile('dist/versions.json', JSON.stringify(versions), function(err) {
+      console.log('Version: dist/versions.json created')
+
+      result(`scp -r dist/. foo.us.to:www/foo.us.to/html/gui2/`, function(err) {
+        if (err) {
+          console.error(err)
+          return
         }
-      ]
 
-      fs.writeFile('dist/versions.json', JSON.stringify(versions), function(err) {
-        console.log('Version: dist/versions.json created')
-
-        result(`scp -r dist/. foo.us.to:www/foo.us.to/html/gui2/`, function(err) {
-          if (err) {
-            console.error(err)
-            return
-          }
-
-          console.log(`Deployed ${sha} to foo.us.to`)
-        })
+        console.log(`Deployed ${sha} to foo.us.to`)
       })
     })
   })

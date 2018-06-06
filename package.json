@@ -9,19 +9,30 @@
     "build-js": "yarn run build-framework && yarn run build-app",
     "watch": "babel --watch www/app.js --out-file www/dist.js",
 
-    "run:darwin:amd64": "yarn run build-framework && yarn run build-app && vgo generate -tags js && set GOARCH=amd64 && yarn run-darwin-linux",
-    "run-darwin-linux": "vgo run -ldflags \" -X main.VERSION=$VERSION\" -v -tags js *.go",
+    "run:darwin:amd64": "yarn pre-build && set GOARCH=amd64 && yarn run-darwin-linux",
 
-    "build:darwin:amd64": "yarn run build-framework && yarn run build-app && vgo generate -tags js && set GOARCH=amd64 && yarn build-darwin-linux",
-    "build:darwin:386": "yarn run build-framework && yarn run build-app && vgo generate -tags js && set GOARCH=386&& set CGO_ENABLED=1&& yarn build-darwin-linux",
+    "build:linux:amd64":   "yarn pre-build && set GOARCH=amd64 && yarn build-darwin-linux",
+    "build:linux:386":     "yarn pre-build && set GOARCH=386 && set CGO_ENABLED=1 && yarn build-darwin-linux",
+
+    "build:darwin:amd64":   "yarn pre-build && set GOARCH=amd64 && yarn build-darwin-linux",
+    "build:darwin:386":     "yarn pre-build && set GOARCH=386 && set CGO_ENABLED=1 && yarn build-darwin-linux",
+
+    "build:windows":     "yarn pre-build && yarn build-windows",
+
+    "pre-build":          "yarn run build-framework && yarn run build-app && vgo generate -tags js",
+    "build-windows":      "yarn pre-build && vgo build -ldflags \"-H windowsgui -X main.VERSION=%VERSION%\" -v -tags js",
+    "run-windows":        "yarn build-windows && ./betaflight-pid-app.exe",
     "build-darwin-linux": "vgo build -ldflags \" -X main.VERSION=$VERSION\" -v -tags js",
-    "version-darwin-amd64": "node scripts/deploy.js build-darwin-linux",
+    "run-darwin-linux":   "vgo run -ldflags \" -X main.VERSION=$VERSION\" -v -tags js *.go",
 
-    "build:window:amd64": "yarn run build-framework && yarn run build-app && vgo generate -tags js && set CGO_ENABLED=1&& set GOARCH=amd64&& yarn build-windows",
-    "build:window:386": "yarn run build-framework && yarn run build-app && vgo generate -tags js && set GOARCH=386&& set CGO_ENABLED=1&& yarn build-windows",
-    "build-windows": "vgo build -ldflags \"-H windowsgui -X main.VERSION=%VERSION%\" -v -tags js",
+    "version:darwin:amd64":  "set GOARCH=amd64&& set CGO_ENABLED=1&& set GOOS=darwin&& node scripts/build.js build-darwin-linux",
+    "deploy:darwin:amd64":  "yarn version:darwin:amd64 && node scripts/deploy.js build-darwin-linux",
 
-    "version-386": "node scripts/deploy.js"
+    "version:windows:amd64":  "set GOARCH=amd64&& set CGO_ENABLED=1&& set GOOS=windows&& node scripts/build.js build-windows",
+    "deploy:windows:amd64":  "yarn version:windows:amd64 && node scripts/deploy.js build-windows",
+
+    "version:windows:386":  "set GOARCH=386&& set CGO_ENABLED=1&& set GOOS=windows&& node scripts/build.js build-windows",
+    "deploy:windows:386":  "yarn version:windows:386 && node scripts/deploy.js build-windows"
   },
   "dependencies": {
     "babel-cli": "^6.26.0",
