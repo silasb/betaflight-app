@@ -18,9 +18,11 @@ install:
   - go env
   - go get -u golang.org/x/vgo
   - vgo list -m
+  - npm install yarn
+  - yarn install
 
 build_script:
-  - echo "hello"
+  - yarn version:windows:amd64
 
 # to disable automatic tests
 test: off
