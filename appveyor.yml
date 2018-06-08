@@ -29,6 +29,10 @@ install:
 build_script:
   - yarn version:windows:amd64
 
+artifacts:
+  - path: betaflight-pid-app.exe
+    name: betaflight-pid-app.exe
+
 # to disable automatic tests
 test: off
 
