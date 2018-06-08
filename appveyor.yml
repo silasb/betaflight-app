@@ -17,6 +17,7 @@ install:
   - go version
   - go env
   - go get -u golang.org/x/vgo
+  - go get -u -u github.com/jteeuwen/go-bindata/...
   - vgo list -m
   - npm install yarn
   - yarn install
