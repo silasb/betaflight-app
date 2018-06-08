@@ -11,12 +11,12 @@ environment:
 #     STACK_ROOT: "c:\\sr"
 
 cache:
-  - C
+  - c:\gopath -> go-packages
 
 # scripts that run after cloning repository
 install:
-  - cinst mingw --x86
-  - set PATH=%GOPATH%\bin;c:\go\bin;%PATH%
+  - cinst mingw
+  - set PATH=%GOPATH%\bin;c:\go\bin;C:\tools\mingw64\bin;%PATH%
   - go version
   - go env
   - go get -u golang.org/x/vgo
