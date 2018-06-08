@@ -19,7 +19,7 @@ install:
   - go get -u golang.org/x/vgo
   - go get -u -u github.com/jteeuwen/go-bindata/...
   - vgo list -m
-  - npm install yarn
+  - npm install -G yarn
   - yarn install
 
 build_script:
