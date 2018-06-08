@@ -17,6 +17,7 @@ cache:
 install:
   - cinst mingw
   - set PATH=%GOPATH%\bin;c:\go\bin;C:\tools\mingw64\bin;%PATH%
+  - gcc -v
   - go version
   - go env
   - go get -u golang.org/x/vgo
