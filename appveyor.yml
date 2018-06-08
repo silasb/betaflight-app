@@ -11,7 +11,7 @@ environment:
 #     STACK_ROOT: "c:\\sr"
 
 cache:
-  - c:\gopath -> go-packages
+  - c:\gopath -> go.mod
 
 # scripts that run after cloning repository
 install:
