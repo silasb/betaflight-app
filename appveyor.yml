@@ -5,8 +5,6 @@ clone_folder: c:\gopath\src\github.com\golang\dep
 environment:
   GOPATH: c:\gopath
   DEPTESTBYPASS501: 1
-
-environment:
   APPVEYOR_RDP_PASSWORD: test1234
 
 on_finish:
