@@ -6,6 +6,12 @@ environment:
   GOPATH: c:\gopath
   DEPTESTBYPASS501: 1
 
+environment:
+  APPVEYOR_RDP_PASSWORD: test1234
+
+on_finish:
+  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+
 # environment:
 #   global:
 #     STACK_ROOT: "c:\\sr"

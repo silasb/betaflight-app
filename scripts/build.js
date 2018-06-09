@@ -31,7 +31,6 @@ function build(buildCmd, cb) {
 
       console.log(response)
 
-
       const exePath = 'gui-' + sha + '.exe'
       const destExePath = 'dist/' + exePath
 
