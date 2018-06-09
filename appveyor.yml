@@ -13,7 +13,6 @@ environment:
 cache:
   - c:\gopath -> go.mod
   - node_modules
-  - C:\tools
 
 # scripts that run after cloning repository
 install:
