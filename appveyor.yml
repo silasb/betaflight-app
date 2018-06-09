@@ -31,7 +31,7 @@ build_script:
   - yarn version:windows:amd64
 
 artifacts:
-  - path: dist/
+  - path: dist/*
     name: Build
 
 # to disable automatic tests
