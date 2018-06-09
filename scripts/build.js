@@ -27,10 +27,7 @@ function build(buildCmd, cb) {
     process.env['VERSION'] = sha
 
     result(`yarn ${buildCmd}`, function(err, response) {
-      if (err) {
-        console.error(err)
-        return
-      }
+      if (err) throw err;
 
       console.log(response)
 
@@ -38,7 +35,8 @@ function build(buildCmd, cb) {
       const exePath = 'gui-' + sha + '.exe'
       const destExePath = 'dist/' + exePath
 
-      fs.rename('betaflight-pid-app.exe', destExePath, function() {
+      fs.rename('betaflight-pid-app.exe', destExePath, function(err) {
+        if (err) throw err;
         console.log('Renamed app from betaflight-pid-app.exe to ' + destExePath)
 
         const versions = [
@@ -49,6 +47,7 @@ function build(buildCmd, cb) {
         ]
 
         fs.writeFile('dist/versions.json', JSON.stringify(versions), function(err) {
+          if (err) throw err;
           console.log('Version: dist/versions.json created')
         })
 
