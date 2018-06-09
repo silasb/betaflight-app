@@ -34,9 +34,28 @@ function build(buildCmd, cb) {
 
       console.log(response)
 
-      if (typeof(cb) === 'function') {
-        cb(sha)
-      }
+
+      const exePath = 'gui-' + sha + '.exe'
+      const destExePath = 'dist/' + exePath
+
+      fs.rename('betaflight-pid-app.exe', destExePath, function() {
+        console.log('Renamed app from betaflight-pid-app.exe to ' + destExePath)
+
+        const versions = [
+          {
+            version: sha,
+            file: exePath
+          }
+        ]
+
+        fs.writeFile('dist/versions.json', JSON.stringify(versions), function(err) {
+          console.log('Version: dist/versions.json created')
+        })
+
+        if (typeof(cb) === 'function') {
+          cb(sha)
+        }
+      })
     })
   })
 }

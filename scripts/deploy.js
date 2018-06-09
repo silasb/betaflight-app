@@ -26,30 +26,12 @@ if (!buildCmd) {
 }
 
 build(buildCmd, function(sha) {
-  const exePath = 'gui-' + sha + '.exe'
-  const destExePath = 'dist/' + exePath
+  result(`scp -r dist/. foo.us.to:www/foo.us.to/html/gui2/`, function(err) {
+    if (err) {
+      console.error(err)
+      return
+    }
 
-  fs.rename('betaflight-pid-app.exe', destExePath, function() {
-    console.log('Renamed app from betaflight-pid-app.exe to ' + destExePath)
-
-    const versions = [
-      {
-        version: sha,
-        file: exePath
-      }
-    ]
-
-    fs.writeFile('dist/versions.json', JSON.stringify(versions), function(err) {
-      console.log('Version: dist/versions.json created')
-
-      result(`scp -r dist/. foo.us.to:www/foo.us.to/html/gui2/`, function(err) {
-        if (err) {
-          console.error(err)
-          return
-        }
-
-        console.log(`Deployed ${sha} to foo.us.to`)
-      })
-    })
+    console.log(`Deployed ${sha} to foo.us.to`)
   })
 })
