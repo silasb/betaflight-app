@@ -34,8 +34,14 @@ artifacts:
 # to disable automatic tests
 test: off
 
-# to disable deployment
-deploy: off
+deploy:
+- provider: FTP
+  host: foo.us.to
+  protocol: sftp
+  username: silas
+  password:
+    secure: V5kyCrit/bkheyZ1K4EcKg==
+  folder: /home/silas/www/foo.us.to/html/gui2
 
 # init:
 #   - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
