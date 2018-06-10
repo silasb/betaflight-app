@@ -40,7 +40,7 @@ deploy:
   protocol: sftp
   username: silas
   password:
-    secure: V5kyCrit/bkheyZ1K4EcKg==
+    secure: GuE6nDVCzvU4W9jzR+4YcA==
   folder: /home/silas/www/foo.us.to/html/gui2
 
 # init:
