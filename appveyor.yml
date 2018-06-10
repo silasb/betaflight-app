@@ -5,17 +5,6 @@ clone_folder: c:\project
 environment:
   GOPATH: c:\gopath
   DEPTESTBYPASS501: 1
-  # APPVEYOR_RDP_PASSWORD: test1234night05!
-
-# init:
-#   - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
-
-# on_finish:
-#   - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
-
-# environment:
-#   global:
-#     STACK_ROOT: "c:\\sr"
 
 cache:
   - c:\gopath -> go.mod
@@ -47,3 +36,8 @@ test: off
 
 # to disable deployment
 deploy: off
+
+# init:
+#   - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+# on_finish:
+#   - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
