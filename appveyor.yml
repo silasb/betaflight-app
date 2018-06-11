@@ -28,7 +28,7 @@ build_script:
   - ls
 
 artifacts:
-  - path: dist/*
+  - path: dist
     name: Build
     type: zip
 
