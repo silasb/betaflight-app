@@ -42,7 +42,7 @@ deploy:
   password:
     secure: GuE6nDVCzvU4W9jzR+4YcA==
   folder: www/foo.us.to/html/gui2
-  application: Build
+  artifact: /dist\/[*.json|*.exe]/
 
 # init:
 #   - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
