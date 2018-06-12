@@ -21,12 +21,12 @@ matrix:
       before_install:
         - brew install yarn
       script:
-        - yarn version:windows:amd64
+        - yarn version:darwin:amd64
   # fast_finish: true
 
 install:
-  - go get -x -u github.com/jteeuwen/go-bindata/...
-  - go get -x -u golang.org/x/vgo
+  - go get -u github.com/jteeuwen/go-bindata/...
+  - go get -u golang.org/x/vgo
   - vgo list -m
   - yarn install
 
