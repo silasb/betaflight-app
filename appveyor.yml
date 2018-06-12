@@ -28,7 +28,6 @@ install:
 
 build_script:
   - yarn version:windows:amd64
-  - ls
 
 artifacts:
   - path: dist
