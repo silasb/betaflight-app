@@ -22,7 +22,7 @@
     "pre-build":          "yarn run build-framework && yarn run build-app && vgo generate -tags js",
     "build-windows":      "yarn pre-build && vgo build -ldflags \"-H windowsgui -X main.VERSION=%VERSION%\" -v -tags js",
     "run-windows":        "yarn build-windows && ./betaflight-pid-app.exe",
-    "build-darwin-linux": "vgo build -ldflags \" -X main.VERSION=$VERSION\" -v -tags js",
+    "build-darwin-linux": "yarn pre-build && vgo build -ldflags \"-X main.VERSION=$VERSION\" -v -tags js",
     "run-darwin-linux":   "vgo run -ldflags \" -X main.VERSION=$VERSION\" -v -tags js *.go",
 
     "version:darwin:amd64":  "GOARCH=amd64 CGO_ENABLED=1 GOOS=darwin node scripts/build.js build-darwin-linux",
