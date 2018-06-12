@@ -5,30 +5,29 @@ go:
 
 matrix:
   include:
-    - os: linux
-      before_install:
-        - curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
-        - echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
-        - sudo apt-get update && sudo apt-get install yarn
-        - sudo add-apt-repository ppa:webkit-team/ppa -y
-        - sudo apt-get update
-        - sudo apt-get install libwebkit2gtk-4.0-dev -y
-      script:
-        - yarn build:darwin:amd64
-        - yarn build-darwin-linux
+    # - os: linux
+    #   before_install:
+    #     - curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+    #     - echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+    #     - sudo apt-get update && sudo apt-get install yarn
+    #     - sudo add-apt-repository ppa:webkit-team/ppa -y
+    #     - sudo apt-get update
+    #     - sudo apt-get install libwebkit2gtk-4.0-dev -y
+    #   script:
+    #     - yarn build:darwin:amd64
+    #     - yarn build-darwin-linux
     - os: osx
       osx_image: xcode8.3
       before_install:
         - brew install yarn
       script:
-        - yarn build:darwin:amd64
-        - yarn build-darwin-linux
+        - yarn version:windows:amd64
   # fast_finish: true
 
 install:
   - go get -x -u github.com/jteeuwen/go-bindata/...
   - go get -x -u golang.org/x/vgo
-  - vgo list -m -u
+  - vgo list -m
   - yarn install
 
 notifications:
