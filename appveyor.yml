@@ -1,5 +1,8 @@
 version: "{build}"
 
+image:
+  - Visual Studio 2015
+
 clone_folder: c:\project
 
 environment:
