@@ -16,6 +16,8 @@ var result = function(command, cb){
 
 function build(buildCmd, cb) {
   result('git describe --tags --long', function(err, sha) {
+    if (err) throw err;
+
     sha = sha.replace(/(.*)-(.*)/, '$1')
     sha = sha.replace(/^\s+|\s+$/g, '')
 
