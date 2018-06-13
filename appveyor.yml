@@ -29,7 +29,7 @@ install:
 
 build_script:
   - yarn version:windows:amd64
-  - ps: cd dist ; (get-item *.exe).Name | upx
+  - cmd: for /f %%a in ('dir /b dist ^| find "exe"') do upx %%a
 
 artifacts:
   - path: dist
