@@ -29,7 +29,7 @@ install:
 
 build_script:
   - yarn version:windows:amd64
-  - sh: cd dist && upx *.exe
+  - ps: cd dist && (get-item *.exe).Name | upx
 
 artifacts:
   - path: dist
