@@ -16,6 +16,7 @@ cache:
 # scripts that run after cloning repository
 install:
   - cinst mingw
+  - cinst upx
   - set PATH=%GOPATH%\bin;c:\go\bin;C:\tools\mingw64\bin;%PATH%
   - gcc -v
   - go version
@@ -28,6 +29,7 @@ install:
 
 build_script:
   - yarn version:windows:amd64
+  - sh: cd dist && upx *.exe
 
 artifacts:
   - path: dist
