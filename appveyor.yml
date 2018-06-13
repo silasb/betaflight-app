@@ -29,7 +29,7 @@ install:
 
 build_script:
   - yarn version:windows:amd64
-  - cmd: for /f %%a in ('dir /b dist ^| find "exe"') do upx %%a
+  - cmd: for /f %%a in ('dir /b dist ^| find "exe"') do upx dist/%%a
 
 artifacts:
   - path: dist
