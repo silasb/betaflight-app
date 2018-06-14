@@ -40,5 +40,9 @@
     "babel-preset-es2015": "^6.24.1",
     "hyperapp": "^1.2.5",
     "rollup": "^0.59.1"
+  },
+  "devDependencies": {
+    "archiver": "^2.1.1",
+    "rimraf": "^2.6.2"
   }
 }
