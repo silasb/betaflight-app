@@ -16,7 +16,7 @@ cache:
 # scripts that run after cloning repository
 install:
   - cinst mingw
-  - choco config get cacheLocation fullPath
+  - choco config get cacheLocation
   - cinst upx
   - set PATH=%GOPATH%\bin;c:\go\bin;C:\tools\mingw64\bin;%PATH%
   - gcc -v
