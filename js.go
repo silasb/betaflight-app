@@ -2,7 +2,7 @@
 
 package main
 
-//go:generate go-bindata -o assets.go www/vendor/hyperapp.min.js www/dist.js www/styles.css www/index.html
+//go:generate go-bindata -o assets.go www/dist.js www/styles.css www/index.html
 
 import (
 	"net/url"
@@ -16,6 +16,5 @@ func injectHTML(html string) string {
 }
 
 func loadUIFramework(w webview.WebView) {
-	w.Eval(string(MustAsset("www/vendor/hyperapp.min.js")))
 	w.Eval(string(MustAsset("www/dist.js")))
 }

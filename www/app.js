@@ -1,6 +1,4 @@
-// import { h, app } from "hyperapp"
-
-const h = window.hyperapp.h
+import { h, app } from "hyperapp"
 
 let state = {
   data: betaflight.data,
@@ -131,10 +129,10 @@ const view = (state, actions) => (
   </div>
 )
 
-const app = window.hyperapp.app(state, actions, view, document.body)
+const app2 = app(state, actions, view, document.body)
 
 betaflight.render = () => {
-  app.updateBetaflightData(betaflight.data)
+  app2.updateBetaflightData(betaflight.data)
 }
 
 const debug = (blah) => alert(JSON.stringify(blah))

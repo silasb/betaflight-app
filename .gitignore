@@ -2,8 +2,6 @@ assets.go
 betaflight-pid-app.exe
 www/dist.js
 www/dist.js.map
-www/vendor/hyperapp.min.js
-www/vendor/hyperapp.min.js.map
 node_modules
 
 dist/

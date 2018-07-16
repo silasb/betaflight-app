@@ -4,23 +4,18 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "build-framework": "rollup -i www/vendor/hyperapp.js -o www/vendor/hyperapp.min.js -m -f umd -n hyperapp",
-    "build-app": "babel www/app.js --out-file www/dist.js",
-    "build-js": "yarn run build-framework && yarn run build-app",
+    "build-app": "parcel build -o dist.js -d www/ --no-minify --detailed-report www/app.js",
+    "build-js": "yarn run build-app",
     "watch": "babel --watch www/app.js --out-file www/dist.js",
-
     "run:darwin:amd64": "yarn run build-framework && yarn run build-app && vgo generate -tags js && set GOARCH=amd64 && yarn run-darwin-linux",
     "run-darwin-linux": "vgo run -ldflags \" -X main.VERSION=$VERSION\" -v -tags js *.go",
-
     "build:darwin:amd64": "yarn run build-framework && yarn run build-app && vgo generate -tags js && set GOARCH=amd64 && yarn build-darwin-linux",
     "build:darwin:386": "yarn run build-framework && yarn run build-app && vgo generate -tags js && set GOARCH=386&& set CGO_ENABLED=1&& yarn build-darwin-linux",
     "build-darwin-linux": "vgo build -ldflags \" -X main.VERSION=$VERSION\" -v -tags js",
     "version-darwin-amd64": "node scripts/deploy.js build-darwin-linux",
-
     "build:window:amd64": "yarn run build-framework && yarn run build-app && vgo generate -tags js && set CGO_ENABLED=1&& set GOARCH=amd64&& yarn build-windows",
     "build:window:386": "yarn run build-framework && yarn run build-app && vgo generate -tags js && set GOARCH=386&& set CGO_ENABLED=1&& yarn build-windows",
     "build-windows": "vgo build -ldflags \"-H windowsgui -X main.VERSION=%VERSION%\" -v -tags js",
-
     "version-386": "node scripts/deploy.js"
   },
   "dependencies": {
@@ -28,6 +23,7 @@
     "babel-plugin-transform-react-jsx": "^6.24.1",
     "babel-preset-es2015": "^6.24.1",
     "hyperapp": "^1.2.5",
+    "parcel": "^1.9.6",
     "rollup": "^0.59.1"
   }
 }
